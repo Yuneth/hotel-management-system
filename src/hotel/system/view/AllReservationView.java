@@ -393,7 +393,7 @@ public class AllReservationView extends javax.swing.JFrame {
 //                ReservationView reservationView = new ReservationView(selectedReservationDetailsDto);
 //                reservationView.setVisible(true);
                 //Open ReservationView and pass the selected data
-                ReservationCancelView reservationCancelView = new ReservationCancelView(selectedReservationDetailsDto);
+                ReservationUpdateView reservationCancelView = new ReservationUpdateView(selectedReservationDetailsDto);
                 reservationCancelView.setVisible(true);
 
             } catch (Exception ex) {

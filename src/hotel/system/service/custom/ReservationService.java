@@ -28,4 +28,6 @@ public interface ReservationService extends SuperService {
     String confirmReservation(ReservationDto dto) throws Exception;
     
     String cancelReservation(String reservationId) throws Exception;
+    
+    //String updateReservation(ReservationDto dto) throws Exception;
 }

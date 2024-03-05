@@ -12,7 +12,7 @@ import hotel.system.view.LoginView;
 import hotel.system.view.AdminDashboardView;
 import hotel.system.view.PackageView;
 import hotel.system.view.ReceptionistDashboardView;
-import hotel.system.view.ReservationCancelView;
+import hotel.system.view.ReservationUpdateView;
 import hotel.system.view.ReservationView;
 import hotel.system.view.RoomView;
 import hotel.system.view.RoomCategoryView;

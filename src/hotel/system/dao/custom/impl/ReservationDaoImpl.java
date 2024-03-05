@@ -25,7 +25,10 @@ public class ReservationDaoImpl implements ReservationDao {
 
     @Override
     public boolean update(ReservationEntity t) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+         return CrudUtil.executeUpdate("UPDATE reservations SET customer_id = ?, status = ? WHERE reservation_id = ?",
+            t.getCustomerId(),
+            t.isStatus(),
+            t.getReservationId());
     }
 
     @Override

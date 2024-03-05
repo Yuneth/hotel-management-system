@@ -724,23 +724,56 @@ public class ReservationView extends javax.swing.JFrame {
     }
 
     // book reservation
+//    private void confirmReservation() {
+//        ReservationDto dto = new ReservationDto(
+//                txtResId.getText(),
+//                comboCustId.getSelectedItem().toString(),
+//                true,
+//                reservationDetailsDtos
+//        );
+//
+//        try {
+//            String resp = reservationController.confirmReservation(dto);
+//            JOptionPane.showMessageDialog(this, resp);
+//            generateAutoReserveID();
+//            clearFields();
+//            getRoomIds();
+//            loadTable();
+//        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(this, ex.getMessage());
+//            Logger.getLogger(ReservationView.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    // book reservation
     private void confirmReservation() {
-        ReservationDto dto = new ReservationDto(
-                txtResId.getText(),
-                comboCustId.getSelectedItem().toString(),
-                true,
-                reservationDetailsDtos
-        );
-
         try {
+            // Retrieve values from the UI components
+            String reservationId = txtResId.getText();
+            String customerId = comboCustId.getSelectedItem().toString();
+
+            // Validate if reservationId and customerId are not empty
+            if (reservationId.isEmpty() || customerId.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please fill in all required fields.");
+                return; // Exit the method if validation fails
+            }
+
+            // Create a ReservationDto
+            ReservationDto dto = new ReservationDto(reservationId, customerId, true, reservationDetailsDtos);
+
+            // Confirm the reservation using the controller
             String resp = reservationController.confirmReservation(dto);
+
+            // Display the response message
             JOptionPane.showMessageDialog(this, resp);
+
+            // Perform additional actions after successful confirmation
             generateAutoReserveID();
             clearFields();
             getRoomIds();
             loadTable();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            // Handle exceptions
+            JOptionPane.showMessageDialog(this, "Error confirming reservation: " + ex.getMessage());
             Logger.getLogger(ReservationView.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -766,43 +799,123 @@ public class ReservationView extends javax.swing.JFrame {
 //        }
 //
 //    }
-
+    // add to Table
+//    private void addtoTable() {
+//
+//        ReservationDetailsDto dto = new ReservationDetailsDto(
+//                txtResId.getText(),
+//                comboRoomId.getSelectedItem().toString(),
+//                comboCustId.getSelectedItem().toString(),
+//                comboPackId.getSelectedItem().toString(),
+//                new Date(),
+//                dateCheckIn.getDate(),
+//                txtCheckInTime.getText(),
+//                dateCheckOut.getDate(),
+//                txtCheckOutTime.getText(),
+//                comboReserStatus.getSelectedItem().toString(),
+//                Double.parseDouble(TotalAmountlbl.getText()),
+//                true // Assuming the default status is true
+//        );
+//
+//        reservationDetailsDtos.add(dto);
+//
+//        Object[] rowData = {
+//            dto.getReservationId(),
+//            dto.getRoomId(),
+//            dto.getCustomerId(),
+//            dto.getPackageId(),
+//            dto.getCheckInDate(),
+//            dto.getCheckInTime(),
+//            dto.getCheckOutDate(),
+//            dto.getCheckOutTime(),
+//            dto.getReserveStatus(),
+//            dto.getAmount()
+//        };
+//
+//        DefaultTableModel dtm = (DefaultTableModel) tblAddRoom.getModel();
+//        dtm.addRow(rowData);
+//        clearFields();
+//    }
     // add to Table
     private void addtoTable() {
+        try {
+            // Validate all fields
+            if (txtResId.getText().isEmpty()
+                    || comboRoomId.getSelectedItem() == null
+                    || comboCustId.getSelectedItem() == null
+                    || comboPackId.getSelectedItem() == null
+                    || dateCheckIn.getDate() == null
+                    || txtCheckInTime.getText().isEmpty()
+                    || dateCheckOut.getDate() == null
+                    || txtCheckOutTime.getText().isEmpty()
+                    || comboReserStatus.getSelectedItem() == null
+                    || TotalAmountlbl.getText().isEmpty()) {
 
-        ReservationDetailsDto dto = new ReservationDetailsDto(
-                txtResId.getText(),
-                comboRoomId.getSelectedItem().toString(),
-                comboCustId.getSelectedItem().toString(),
-                comboPackId.getSelectedItem().toString(),
-                new Date(),
-                dateCheckIn.getDate(),
-                txtCheckInTime.getText(),
-                dateCheckOut.getDate(),
-                txtCheckOutTime.getText(),
-                comboReserStatus.getSelectedItem().toString(),
-                Double.parseDouble(TotalAmountlbl.getText()),
-                true // Assuming the default status is true
-        );
+                // Display an error message if any field is empty
+                JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+                return;  // Exit the method without adding to the table
+            }
 
-        reservationDetailsDtos.add(dto);
+            // Retrieve values from the UI components
+            String reservationId = txtResId.getText();
+            String roomId = comboRoomId.getSelectedItem().toString();
+            String customerId = comboCustId.getSelectedItem().toString();
+            String packageId = comboPackId.getSelectedItem().toString();
+            Date currentDate = new Date();  // Assuming you want the current date
+            Date checkInDate = dateCheckIn.getDate();
+            String checkInTime = txtCheckInTime.getText();
+            Date checkOutDate = dateCheckOut.getDate();
+            String checkOutTime = txtCheckOutTime.getText();
+            String reserveStatus = comboReserStatus.getSelectedItem().toString();
+            double totalAmount = Double.parseDouble(TotalAmountlbl.getText());
 
-        Object[] rowData = {
-            dto.getReservationId(),
-            dto.getRoomId(),
-            dto.getCustomerId(),
-            dto.getPackageId(),
-            dto.getCheckInDate(),
-            dto.getCheckInTime(),
-            dto.getCheckOutDate(),
-            dto.getCheckOutTime(),
-            dto.getReserveStatus(),
-            dto.getAmount()
-        };
+            // Create a ReservationDetailsDto
+            ReservationDetailsDto dto = new ReservationDetailsDto(
+                    reservationId,
+                    roomId,
+                    customerId,
+                    packageId,
+                    currentDate,
+                    checkInDate,
+                    checkInTime,
+                    checkOutDate,
+                    checkOutTime,
+                    reserveStatus,
+                    totalAmount,
+                    true // Assuming the default status is true
+            );
 
-        DefaultTableModel dtm = (DefaultTableModel) tblAddRoom.getModel();
-        dtm.addRow(rowData);
-        clearFields();
+            // Add the dto to the reservationDetailsDtos list
+            reservationDetailsDtos.add(dto);
+
+            // Create an array of rowData
+            Object[] rowData = {
+                dto.getReservationId(),
+                dto.getRoomId(),
+                dto.getCustomerId(),
+                dto.getPackageId(),
+                dto.getCheckInDate(),
+                dto.getCheckInTime(),
+                dto.getCheckOutDate(),
+                dto.getCheckOutTime(),
+                dto.getReserveStatus(),
+                dto.getAmount()
+            };
+
+            // Add rowData to the table model
+            DefaultTableModel dtm = (DefaultTableModel) tblAddRoom.getModel();
+            dtm.addRow(rowData);
+
+            // Clear UI fields
+            clearFields();
+        } catch (NumberFormatException ex) {
+            // Handle parsing errors for TotalAmountlbl
+            JOptionPane.showMessageDialog(this, "Error parsing total amount: " + ex.getMessage());
+        } catch (Exception ex) {
+            // Handle other exceptions
+            JOptionPane.showMessageDialog(this, "Error adding reservation to table: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 
     // get amount for room
@@ -851,7 +964,6 @@ public class ReservationView extends javax.swing.JFrame {
 //
 //            // Call the method to update the total amount
 //            totalAmount();
-
             // Check if the selected packageId is not null before fetching the amount
             if (selectedPackageId != null) {
                 // Fetch the amount based on the selected packageId

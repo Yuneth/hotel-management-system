@@ -194,4 +194,59 @@ public class ReservationServiceImpl implements ReservationService {
         //return false;
     }
 
+    public String updateReservation(ReservationDto dto) throws Exception {
+        Connection connection = DBConnection.getInstance().getConnection();
+        try {
+            connection.setAutoCommit(false);
+
+            // Update ReservationEntity
+            ReservationEntity reservationEntity = new ReservationEntity(
+                    dto.getReservationId(),
+                    dto.getCustomerId(),
+                    dto.isStatus());
+
+            if (reservationDao.update(reservationEntity)) {
+                // Update ReservationDetailsEntities
+                boolean isUpdatedReservationDetails = true;
+
+                for (ReservationDetailsDto reservationDetailsDto : dto.getReservationDetailsDtos()) {
+                    ReservationDetailsEntity reservationDetailsEntity = new ReservationDetailsEntity(
+                            dto.getReservationId(),
+                            reservationDetailsDto.getRoomId(),
+                            reservationDetailsDto.getCustomerId(),
+                            reservationDetailsDto.getPackageId(),
+                            reservationDetailsDto.getReserveDate(),
+                            reservationDetailsDto.getCheckInDate(),
+                            reservationDetailsDto.getCheckInTime(),
+                            reservationDetailsDto.getCheckOutDate(),
+                            reservationDetailsDto.getCheckOutTime(),
+                            reservationDetailsDto.getReserveStatus(),
+                            reservationDetailsDto.getAmount(),
+                            reservationDetailsDto.isStatus());
+
+                    if (!reservationDetailsDao.update(reservationDetailsEntity)) {
+                        isUpdatedReservationDetails = false;
+                    }
+                }
+
+                if (isUpdatedReservationDetails) {
+                    connection.commit();
+                    return "Successfully Updated";
+                } else {
+                    connection.rollback();
+                    return "Error in Updating Reservation Details";
+                }
+            } else {
+                connection.rollback();
+                return "Error in Updating Reservation";
+            }
+        } catch (Exception e) {
+            connection.rollback();
+            e.printStackTrace();
+            return e.getMessage();
+        } finally {
+            connection.setAutoCommit(true);
+        }
+
+    }
 }
